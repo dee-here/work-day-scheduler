@@ -58,6 +58,7 @@ textarea {
   transition: all 0.3s ease-in-out;
 }
 
+/* Save to localStorage text */
 #changesSaved {
   text-align: center;
   opacity: 0;
