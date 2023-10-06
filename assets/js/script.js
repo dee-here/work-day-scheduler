@@ -8,13 +8,10 @@ var currentDayEl = $('#currentDay');
 var saveMessageEl = $('#changesSaved');
 
 var currentDay;
-// var currentHour;
 var currentHour = dayjs().hour();
-// var currentHour = 12;
 
 //localStorage
-let taskArray = new Array(9);
-
+var taskArray = new Array(9);
 
 $(function () {
 
@@ -30,6 +27,8 @@ function saveToLocalStorage() {
 var taskArrayToSave = JSON.stringify(taskArray);
 localStorage.setItem('tasks', taskArrayToSave);
 
+//display and fade save to local storage text
+fadeSavetoLocalStorageText();
 // get tasks from localSTorage
 loadTasksFromLocalStorage();
 }
@@ -60,30 +59,10 @@ function updateTasksForTimeBlocks() {
   }
 }
   function handleTimeBlockClicks(event){
-    //this event has a current target that gives us the clicked div id => div#hour-9, div#hour-10, div#hour-11
-    console.log("code-handleTextAreaClicks with event : ", event);
-  
-    if($(event.target).is('div')) {
-      var divClicked = $(event.target);
-      console.log("divClicked !!", divClicked);
-      console.log("divClicked this!!", this);
-    }  
-    
-    if($(event.target).is('textarea')) {
-      var textAreaClicked = $(event.target);
-      console.log("textAreaClicked !!", textAreaClicked);
-      console.log("textAreaClicked this!!", this);
-    }
-    if($(event.target).is('button')) {
-      var buttonClicked = $(event.target);
-      console.log("buttonClicked !!", buttonClicked);
-      console.log("BntClicked this!!", this);
-
-      //call method to update taskArray based on what user enetered
+    if($(event.target).is('button') || $(event.target).is('i')) {
       updateTaskArray(this);
       saveToLocalStorage();
     }
-
   }
 
 function updateTaskArray(div) {
@@ -115,40 +94,27 @@ function updateTaskArray(div) {
 
 //Add colors to each time black
 function addColorForTimeBlocks() {
-  // console.log("lets add color to: !", timeBlockContainerEl);
-
-  // console.log("lets add color to: !", timeBlockContainerEl.children('.time-block'));
-
-  // getHourFromDivId('hour-20');
-  //var currentTime = dayjs();
-  // console.log(`The current HOUR is: `, currentDay.hour());
 
   var allTimeBlock = timeBlockContainerEl.children('.time-block');
   // console.log("allTimeBlock instance of Jquery: ", allTimeBlock instanceof jQuery);
 
   for(let i=0; i<allTimeBlock.length; i++) {
-    // console.log("EACH TimeBlock instance of Jquery: ", $(allTimeBlock[i]) instanceof jQuery);
-    // console.log(allTimeBlock[i]);
-    // console.log($(allTimeBlock[i]));
     allTimeBlock[i] = $(allTimeBlock[i]);
     var blockId = getDivId($(allTimeBlock[i]));
     var blockHour = parseInt(getHourFromDivId(blockId));
-    // console.log("blockId : ", blockId, blockHour, currentHour);
-    // console.log("checking is Jquery for alltimeblock[i] ", allTimeBlock[i] instanceof jQuery);
-    // allTimeBlock[i] = $(allTimeBlock[i]);
     if(blockHour === currentHour) {
-      console.log(" Add Current state !");
+      // console.log(" Add Current state !");
       allTimeBlock[i].removeClass('past');
       allTimeBlock[i].removeClass('future');
       allTimeBlock[i].addClass('present');
 
     } else if (blockHour < currentHour) {
-      console.log( "add PAST ###");
+      // console.log( "add PAST ###");
       allTimeBlock[i].removeClass('present');
       allTimeBlock[i].removeClass('future');
       allTimeBlock[i].addClass('past');
     } else if (blockHour > currentHour) {
-      console.log( "add Future !!!!"); 
+      // console.log( "add Future !!!!"); 
       allTimeBlock[i].removeClass('present');
       allTimeBlock[i].removeClass('past');
       allTimeBlock[i].addClass('future');
@@ -177,7 +143,7 @@ function getDivId(div) {
 
 
 //call method to color each block!
-addColorForTimeBlocks()
+// addColorForTimeBlocks()
 
   //
   // TODO: Add code to get any user input that was saved in localStorage and set
@@ -185,28 +151,35 @@ addColorForTimeBlocks()
   // attribute of each time-block be used to do this?
   //
   // TODO: Add code to display the current date in the header of the page.
-function displayTime() {
+function updateTime() {
   //update time
   currentDay = dayjs();
   currentHour = currentDay.hour();
 
-  currentDayEl.text(dayjs().format('ddd, MMM D, YYYY HH:mm:ss'));
-  saveMessageEl.text(currentHour);
+  currentDayEl.text(dayjs().format('dddd, MMMM D, YYYY h:mm:ss A'));
+  // saveMessageEl.text(currentHour);
 
   //add colors for each block
   addColorForTimeBlocks();
 }
 
-
+function fadeSavetoLocalStorageText() {
+  //Show saved to local storage message.
+  saveMessageEl.addClass('show-message');
+  //Fade the messaage after 5 seconds.
+  setTimeout(function() {
+    saveMessageEl.removeClass('show-message');
+  }, 5000);
+}
 
 //mainfunction
 function init() {
 //add timer event to update time
 timeBlockContainerEl.on('click', '.time-block', handleTimeBlockClicks);
-displayTime()
+updateTime()
 addColorForTimeBlocks();
 updateTasksForTimeBlocks()
-setInterval(displayTime, 1000);
+setInterval(updateTime, 1000);
 }
 
 init();

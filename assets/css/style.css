@@ -57,3 +57,19 @@ textarea {
   font-size: 20px;
   transition: all 0.3s ease-in-out;
 }
+
+#changesSaved {
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+
+#changesSaved.show-message {
+  opacity: 1;
+  transition: opacity .3s ease-in;
+}
+
+.red {
+  color: #b91717;
+  font-family: monospace;
+}
